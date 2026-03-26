@@ -15,6 +15,28 @@
         color: #1f2937;
       }
 
+      .top-links {
+        max-width: 680px;
+        margin: 0 auto 12px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .top-links a {
+        text-decoration: none;
+        color: #134b8a;
+        background: #e9f2ff;
+        border: 1px solid #bfd6f6;
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+
+      .top-links a:hover {
+        background: #dbeafe;
+      }
+
       #root {
         max-width: 680px;
         margin: 0 auto;
@@ -27,6 +49,14 @@
 
       #root > * {
         margin-bottom: 12px;
+      }
+
+      #root > button {
+        margin-right: 8px;
+      }
+
+      #root > button:last-of-type {
+        margin-right: 0;
       }
 
       table {
@@ -73,6 +103,10 @@
     </style>
 </head>
 <body>
+<div class="top-links">
+    <a href="/swagger/index.html">API docs</a>
+    <a href="/swagger/doc.json">OpenAPI file</a>
+</div>
 <div id="root"></div>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script type="text/babel" data-type="module">
