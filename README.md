@@ -8,6 +8,18 @@ The application right now is implemented as three parts:
 2. API that right now solves the task and responds with a solution.
 3. API Docs in swagger format
 
+## Structure
+
+```
+app           - runnable package
+app/api       - API DTOs and methods
+app/docs      - generated docs in OpenAPI format
+app/lifecycle - simple lifecycle to run and shutdown gracefully
+app/service   - main business logic
+
+ui            - Web UI to interact with API
+```
+
 ## Endpoints
 
 | URL                 | Description                                             |
