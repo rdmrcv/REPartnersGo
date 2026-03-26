@@ -10,9 +10,9 @@ import (
 
 // Request model to validate calculation.
 type Request struct {
-	Order int `json:"order" binding:"required,gt=0" minimum:"1"`
+	Order int `json:"order" binding:"required,gt=0,lte=10000000" minimum:"1" maximum:"10000000"`
 
-	Packages []int `json:"packages" binding:"required,dive,gt=0"`
+	Packages []int `json:"packages" binding:"required,dive,gt=0,lte=1000000"`
 }
 
 // Response model to have typed output.
@@ -41,6 +41,8 @@ func Solve(c *gin.Context) {
 
 	if err := c.ShouldBindBodyWithJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ResponseErr{Error: err.Error()})
+
+		return
 	}
 
 	resp, err := service.Solve(req.Order, req.Packages)
