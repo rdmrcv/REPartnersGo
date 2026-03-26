@@ -3,6 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <title>Packs UI</title>
+    <style>
+      :root {
+        font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #f4f7fb;
+        color: #1f2937;
+      }
+
+      #root {
+        max-width: 680px;
+        margin: 0 auto;
+        background: #ffffff;
+        border: 1px solid #d6deea;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+      }
+
+      #root > * {
+        margin-bottom: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border: 1px solid #dde3ee;
+        padding: 8px;
+        text-align: left;
+      }
+
+      input,
+      button {
+        font: inherit;
+        padding: 6px 10px;
+      }
+
+      input {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      button {
+        border: 1px solid #c8d1e0;
+        border-radius: 6px;
+        background: #eff3f9;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #e2ebf8;
+      }
+
+      .report-error {
+        color: #b42318;
+      }
+
+      .report-info {
+        color: #027a48;
+      }
+    </style>
 </head>
 <body>
 <div id="root"></div>
