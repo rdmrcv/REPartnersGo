@@ -21,15 +21,16 @@ The application right now is implemented as three parts:
 
 UI is a minimalistic React application that allows you to solve a packaging task with your own config.
 
-It allows you to save your package sizes preset and share it with someone — click "save" and shareable URL will be in your clipboard, and when you follow that link, your package sizes preset will be loaded.
+It allows you to save your package sizes preset and share it with someone — click "save" and shareable URL will be in
+your clipboard, and when you follow that link, your package sizes preset will be loaded.
 
 ## Config
 
 The app can be configured with env vars. List of supported config:
 
-| ENV         | Description                                                  |
-|-------------|--------------------------------------------------------------|
-| LISTEN_ADDR | Set address to the listener where will be exposed API and UI |
+| ENV  | Description                                               |
+|------|-----------------------------------------------------------|
+| PORT | Set port to the listener where will be exposed API and UI |
 
 ## Build
 
@@ -42,8 +43,9 @@ $ make
 At this point you will have ./out/server binary that can be useful for the local debug process.
 
 To run the app, you should execute it via your cli:
+
 ```shell
-$ export LISTEN_ADDR=:8080
+$ export PORT=8080
 $ ./out/server
 ```
 
@@ -56,7 +58,7 @@ $ docker build -t solver:v0.0.1 .
 ```
 
 To run the container, then you need to expose the proper port (by default, it is `:8080` but you can override it with
-`LISTEN_ADDR` env).
+`PORT` env).
 
 ```shell
 $ docker run -p 8080:8080 solver:v0.0.1
@@ -65,8 +67,10 @@ $ docker run -p 8080:8080 solver:v0.0.1
 ## Docs
 
 The app contains OpenAPI docs. To generate them, you could use the `make`:
+
 ```shell
 $ make docs
 ```
 
-Also, in the [#Endpoints](#Endpoints) you can find URLs where docs UI and docs file in the OpenAPI format will be available after the app is started.
+Also, in the [#Endpoints](#Endpoints) you can find URLs where docs UI and docs file in the OpenAPI format will be
+available after the app is started.

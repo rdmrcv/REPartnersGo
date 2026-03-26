@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -21,15 +22,15 @@ func main() {
 
 	slog.SetDefault(logger)
 
-	addr, has := os.LookupEnv("LISTEN_ADDR")
+	port, has := os.LookupEnv("PORT")
 	if !has {
-		addr = ":8080"
+		port = "8080"
 	}
 
 	lifecycle.Run(
 		context.Background(),
 		logger,
-		api.NewWorker(addr, logger),
+		api.NewWorker(fmt.Sprintf("0.0.0.0:%s", port), logger),
 		ShutdownDuration,
 	)
 }
