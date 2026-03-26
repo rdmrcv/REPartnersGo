@@ -1,13 +1,16 @@
-package main
+package service
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"sort"
 )
 
 var (
 	ErrCannotSolve = errors.New("cannot solve state")
+
+	ErrParams = errors.New("invalid parameters")
 )
 
 // inf value to initialize values in the state
@@ -19,17 +22,28 @@ const inf = math.MaxInt - 1
 
 // Solve will solve packing for a specified order and packs configuration
 //
-// Error can be returned from this function only when we have a bug. With any
-// package configuration we should be able to solve a packing task at least with
-// massive oversend or vast amount of pack utilization. So treat this error as a
-// strong signal to re-check logic and tests, not just a plain error.
+// ErrCannotSolve error can be returned from this function only when we have a
+// bug. With any package configuration we should be able to solve a packing task
+// at least with massive oversend or vast amount of pack utilization. So treat
+// this error as a strong signal to re-check logic and tests, not just a plain
+// error.
 func Solve(order int, packs []int) (map[int]int, error) {
 	// Sanity check.
 	if len(packs) == 0 || order == 0 {
 		return nil, nil
 	}
 
-	// If there is only one pack size — we cannot do anything here and just send as is.
+	if order < 0 {
+		return nil, fmt.Errorf("invalid order: %d: %w", order, ErrParams)
+	}
+
+	sort.Ints(packs)
+
+	if packs[0] <= 0 {
+		return nil, fmt.Errorf("invalid pack: %d: %w", packs[0], ErrParams)
+	}
+
+	// If there is only one pack size, we cannot do anything here and just send as is.
 	if len(packs) == 1 {
 		packsAmount := order / packs[0]
 		if order%packs[0] > 0 {
@@ -40,8 +54,6 @@ func Solve(order int, packs []int) (map[int]int, error) {
 			packs[0]: packsAmount,
 		}, nil
 	}
-
-	sort.Ints(packs)
 
 	// How long we should go in the worst case
 	iterLength := order + packs[len(packs)-1]

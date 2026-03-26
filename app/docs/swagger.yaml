@@ -1,0 +1,61 @@
+basePath: /api
+definitions:
+  api.Request:
+    properties:
+      order:
+        minimum: 1
+        type: integer
+      packages:
+        items:
+          type: integer
+        type: array
+    required:
+    - order
+    - packages
+    type: object
+  api.Response:
+    properties:
+      packs:
+        additionalProperties:
+          type: integer
+        type: object
+    type: object
+  api.ResponseErr:
+    properties:
+      error:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: Solver API
+  version: 0.0.1
+paths:
+  /solve:
+    post:
+      consumes:
+      - application/json
+      description: Receive order and packs variants and responds with optimal packing.
+      parameters:
+      - description: Request for task solution
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.ResponseErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/api.ResponseErr'
+      summary: Receive config for packing and respond accordingly.
+swagger: "2.0"

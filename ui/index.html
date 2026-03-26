@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Packs UI</title>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" data-type="module">
+  import React from "https://esm.sh/react@19/?dev"
+  import ReactDOMClient from "https://esm.sh/react-dom@19/client?dev"
+
+  const {useState} = React;
+
+  const DEFAULT_PRESET = [100, 200, 500]
+
+  const PackVariants = ({preset, setResult, onChange}) => {
+    return <table>
+      <caption>Available package sizes</caption>
+      <thead>
+        <tr><th>Pack size</th><th></th></tr>
+      </thead>
+      <tbody>
+      {(preset?.packs ?? []).map((pack, index) => {
+          return <tr key={pack + index.toString()}>
+              <td><PackVariant pack={pack} /></td>
+              <td><button onClick={() => {
+                  onChange((v) => {
+                      let packs = (v.packs ?? [])
+                      packs.splice(index, 1)
+
+                      return {packs: packs }
+                  })
+              }}>-</button></td>
+          </tr>
+      })}
+      <tr><td><input id="add-new" /></td><td><button onClick={() => {
+          const el = document.querySelector("#add-new");
+          const val = Number.parseInt(el?.value, 10)
+          el.value = ''
+
+          if (Number.isNaN(val)) {
+              setResult({error: 'You should enter only integers here.'})
+
+              return
+          }
+
+          if (val <= 0) {
+              setResult({error: 'You should enter only values greater than 0 here.'})
+
+              return
+          }
+
+          onChange((v) => {
+              return {
+                  packs: [...(v?.packs ?? []), val]
+              }
+          })
+      }}>+</button></td></tr>
+      </tbody>
+    </table>
+  }
+
+  const PackVariant = ({pack}) => {
+    return <span>{pack}</span>
+  }
+
+  const AmountForm = ({value, onChange}) => {
+    return <div>
+      <label>
+        <span>Amount to deliver:</span><input value={value} onChange={(e) => {onChange(e.target.value)}} />
+      </label>
+    </div>
+  }
+
+  const SubmitButton = ({preset, order, setResult}) => {
+    return <button className="submit-amount" onClick={async () => {
+      const val = Number.parseInt(order)
+      if (Number.isNaN(val)) {
+        setResult({error: 'Order should be number.'})
+
+        return
+      }
+
+      if (val <= 0) {
+          setResult({error: 'Order should be greater than 0.'})
+
+          return
+      }
+
+      try {
+        const resp = await fetch('/api/solve', {
+          method: 'post',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({order: val, packages: preset?.packs ?? []}),
+        })
+
+        if (resp.ok) {
+          const body = await resp.json()
+
+          if ('packs' in body) {
+            setResult(body)
+          } else {
+            setResult({error: 'Whoops. Response received but not what was expected :( Report your input please!'})
+          }
+
+          return
+        }
+
+        switch (resp.status) {
+          case 500:
+            setResult({error: 'Server not working right now. Give it some time.'})
+            break
+          case 400:
+            const body = await resp.json()
+
+            setResult({error: 'Something not working around your input.' + body?.error ? ' Pay attention:' + body.error : ''})
+            break
+        }
+      } catch (error) {
+        setResult({error: 'Network failure. Maybe you disconnected?'})
+      }
+    }}>Solve!</button>
+  }
+
+  const SaveButton = ({preset, setResult}) => {
+    return <button onClick={async () => {
+      const url = new URL(window.location.href);
+
+      url.hash = btoa(JSON.stringify(preset))
+
+      try {
+        await navigator.clipboard.writeText(url.toString())
+
+        setResult({message: 'The links copied to your clipboard! To re-use presets - follow that link and your presets will be loaded.'})
+      } catch (err) {
+        setResult({error: 'Cannot copy shareable link!'})
+      }
+    }}>Save</button>
+  }
+
+  const ReportArea = ({result}) => {
+    console.dir(result)
+
+    switch (true) {
+      case 'error' in result:
+        return <div className="report-error">{result.error}</div>
+      case 'message' in result:
+        return <div className="report-info">{result.message}</div>
+      case 'packs' in result:
+          console.log("here we go")
+        return <table>
+          <thead><tr><th>Pack Size</th><th>Pack Amount</th></tr></thead>
+          <tbody>
+          {Object.getOwnPropertyNames(result.packs).map((name, index) => <tr key={name + index.toString(10)}>
+            <td>{name}</td>
+            <td>{result.packs[name]}</td>
+          </tr>)}
+          </tbody>
+        </table>
+    }
+  }
+
+  const initPreset = () => {
+    const hash = window.location.hash.substring(1).trim();
+    const preset = {packs: DEFAULT_PRESET}
+
+    if (hash.length) {
+      // Remove hash from URL
+      history.replaceState(null, document.title, window.location.pathname + window.location.search);
+
+      let saved = JSON.parse(atob(hash))
+      if ('packs' in saved && Array.isArray(saved.packs)) {
+        const savedPacks = saved.packs.filter((v) => Number.isInteger(v))
+
+        if (savedPacks.length) {
+          preset.packs = savedPacks
+        }
+      }
+    }
+
+    return preset
+  }
+
+  const App = () => {
+    let [preset, setPreset] = useState(initPreset());
+    let [order, setOrder] = useState(1000);
+    let [result, setResult] = useState({});
+
+    return <>
+      <PackVariants preset={preset} setResult={setResult} onChange={setPreset}/>
+      <AmountForm value={order} onChange={setOrder}/>
+      <SubmitButton preset={preset} order={order} setResult={setResult} />
+      <SaveButton preset={preset} setResult={setResult}/>
+      <ReportArea result={result}/>
+    </>
+  }
+
+
+  const domNode = document.getElementById('root');
+  const root = ReactDOMClient.createRoot(domNode);
+
+  root.render(<App />);
+</script>
+</body>
+</html>
