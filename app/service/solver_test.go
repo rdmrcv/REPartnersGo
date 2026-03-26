@@ -15,14 +15,15 @@ func TestSolve(t *testing.T) {
 		{order: 100, packs: []int{10, 20, 30}, want: map[int]int{30: 3, 10: 1}},
 		{order: 50, packs: []int{5, 10, 20}, want: map[int]int{10: 1, 20: 2}},
 
-		// Shortcuts
+		// // Shortcuts
 		{order: 5, packs: []int{5000}, want: map[int]int{5000: 1}},
 		{order: 5000, packs: []int{5}, want: map[int]int{5: 1000}},
 		{order: 0, packs: []int{5}, want: map[int]int{}},
 		{order: 5000, packs: []int{}, want: map[int]int{}},
 
-		// Some edge cases
+		// // Some edge cases
 		{order: 46, packs: []int{3, 23}, want: map[int]int{23: 2}},
+		{order: 13, packs: []int{31, 5}, want: map[int]int{5: 3}},
 		{order: 500_000, packs: []int{23, 31, 53}, want: map[int]int{23: 2, 31: 7, 53: 9429}},
 		{order: 500, packs: []int{1, 500_000}, want: map[int]int{1: 500}},
 	}

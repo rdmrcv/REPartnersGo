@@ -85,7 +85,7 @@ func Solve(order int, packs []int) (map[int]int, error) {
 		}
 
 		// If we calculated enough state — return first exists distribution as a result.
-		if i == order {
+		if i >= order {
 			if stateInst.Get(i).Exists() {
 				for idx, num := range stateInst[i] {
 					if num != 0 {
