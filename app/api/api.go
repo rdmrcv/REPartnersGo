@@ -10,9 +10,9 @@ import (
 
 // Request model to validate calculation.
 type Request struct {
-	Order int `json:"order" binding:"required,gt=0,lte=10000000" minimum:"1" maximum:"10000000"`
+	Order int `json:"order" binding:"required,gt=0,lte=1000000" minimum:"1" maximum:"10000000"`
 
-	Packages []int `json:"packages" binding:"required,dive,gt=0,lte=1000000"`
+	Packages []int `json:"packages" binding:"required,dive,gt=0,lte=100000"`
 }
 
 // Response model to have typed output.
